@@ -1,11 +1,10 @@
 package zlibrary
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
+	"strings"
 
-	"github.com/maimunahmed2/ZLibrary-API-For-Go/types"
 	"github.com/maimunahmed2/ZLibrary-API-For-Go/utils"
 )
 
@@ -18,10 +17,10 @@ type ZLibrary struct {
 	cookies      map[string]string
 }
 
-func (z *ZLibrary) Init(email string, password string)(*http.Response, error) {
+func (z *ZLibrary) Init(email string, password string)(map[string]interface{}, error) {
 	z.email = email
 	z.password = password
-	z.domain = "singlelogin.se"
+	z.domain = "https://singlelogin.se"
 	z.isLoggedIn = false
 	z.headers = map[string]string{
 		"Content-Type":    "application/x-www-form-urlencoded",
@@ -41,14 +40,29 @@ func (z *ZLibrary) Init(email string, password string)(*http.Response, error) {
 
 }
 
-func (z ZLibrary) Login(email string, password string)(*http.Response, error) {
-	credentials, err := json.Marshal(types.Login{Email: email, Password: password})
+func (z ZLibrary) Login(email string, password string)(map[string]interface{}, error) {
+	formData := map[string]string{"email": email, "password": password}
+	// Alternatively
+	// formData := make(map[string]string)
+    // formData["email"] = email
+    // formData["password"] = password
+
+	res, err := utils.MakePostRequest(z.domain+"/eapi/user/login", formData)
 	if err != nil {
 		return nil, err
 	}
-	return utils.MakePostRequest(z.domain+"/eapi/user/login", credentials)
+
+	if errVal, ok := res["error"]; ok {
+		errMsg := strings.ToLower(errVal.(string))
+		return nil, errors.New(errMsg)
+	}
+	return res, nil
 }
 
 func (z ZLibrary) GetProfile()(*http.Response, error) {
 	return utils.MakeGetRequest(z.domain+"/eapi/user/profile")
+}
+
+func (z ZLibrary) GetSimilar(id string, hash string)(*http.Response, error) {
+	return utils.MakeGetRequest(z.domain+"/eapi/book/"+id+"/"+hash+"/similar")
 }
