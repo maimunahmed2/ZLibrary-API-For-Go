@@ -12,19 +12,15 @@ import (
 type ZLibrary struct {
 	email        string
 	password     string
-	remixUserId  string
-	remixUserKey string
 	domain       string
 	isLoggedIn   bool
 	headers      map[string]string
 	cookies      map[string]string
 }
 
-func (z *ZLibrary) Init(email string, password string, remixUserId string, remixUserKey string)(*http.Response, error) {
+func (z *ZLibrary) Init(email string, password string)(*http.Response, error) {
 	z.email = email
 	z.password = password
-	z.remixUserId = remixUserId
-	z.remixUserKey = remixUserKey
 	z.domain = "singlelogin.se"
 	z.isLoggedIn = false
 	z.headers = map[string]string{
@@ -37,15 +33,12 @@ func (z *ZLibrary) Init(email string, password string, remixUserId string, remix
 		"siteLanguageV2": "en",
 	}
 
-	if remixUserId == "" && remixUserKey == "" {
-		if email == "" && password == "" {
-			return nil, errors.New("email and password cannot be empty")
-		}
-		
-		return z.Login(email, password)
+	if email == "" && password == "" {
+		return nil, errors.New("email and password cannot be empty")
 	}
+	
+	return z.Login(email, password)
 
-	return z.TokenLoginIn(remixUserId, remixUserKey)
 }
 
 func (z ZLibrary) Login(email string, password string)(*http.Response, error) {
@@ -54,14 +47,6 @@ func (z ZLibrary) Login(email string, password string)(*http.Response, error) {
 		return nil, err
 	}
 	return utils.MakePostRequest(z.domain+"/eapi/user/login", credentials)
-}
-
-func (z ZLibrary) TokenLoginIn(remixUserId string, remixUserKey string)(*http.Response, error) {
-	credentials, err := json.Marshal(types.TokenLoginIn{RemixUserId: remixUserId, RemixUserKey: remixUserKey})
-	if err != nil {
-		return nil, err
-	}
-	return utils.MakePostRequest(z.domain+"/eapi/user/token-sign-in", credentials)
 }
 
 func (z ZLibrary) GetProfile()(*http.Response, error) {
