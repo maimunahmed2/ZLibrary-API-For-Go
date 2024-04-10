@@ -16,12 +16,12 @@ func encodeForm(data map[string]string) string {
     return values.Encode()
 }
 
-func MakePostRequest(link string, data map[string]string)(map[string]interface{}, error) {
-    formData := url.Values{}
-    for key, value := range data {
-		formData.Set(key, value)
-	}
-    requestBody := strings.NewReader(formData.Encode())
+func MakePostRequest(link string, data *strings.Reader)(map[string]interface{}, error) {
+    // formData := url.Values{}
+    // formData.Set("key", "value")
+    // for key, value := range data {
+	// }
+    // requestBody := strings.NewReader(formData.Encode())
     // formData := make(map[string]string)
     // formData["email"] = "studywithmaimun@gmail.com"
     // formData["password"] = "maimun123"
@@ -31,7 +31,7 @@ func MakePostRequest(link string, data map[string]string)(map[string]interface{}
 	// 	formData.Set(key, value)
 	// }
     
-    req, err := http.NewRequest("POST", "https://singlelogin.se/eapi/user/login", requestBody)
+    req, err := http.NewRequest("POST", "https://singlelogin.se/eapi/user/login", data)
     if err != nil {
         fmt.Println("Error creating request:", err)
         return nil, err

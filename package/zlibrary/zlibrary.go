@@ -3,6 +3,7 @@ package zlibrary
 import (
 	"errors"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/maimunahmed2/ZLibrary-API-For-Go/utils"
@@ -41,13 +42,19 @@ func (z *ZLibrary) Init(email string, password string)(map[string]interface{}, e
 }
 
 func (z ZLibrary) Login(email string, password string)(map[string]interface{}, error) {
-	formData := map[string]string{"email": email, "password": password}
+	formData := url.Values{"email": {email}, "password": {password}}
+	requestBody := strings.NewReader(formData.Encode())
 	// Alternatively
+	// formData := url.Values{}
+    // formData.Set("key", "value")
+	// OR
+	// formData := map[string]string{"email": email, "password": password}
+	// OR
 	// formData := make(map[string]string)
     // formData["email"] = email
     // formData["password"] = password
 
-	res, err := utils.MakePostRequest(z.domain+"/eapi/user/login", formData)
+	res, err := utils.MakePostRequest(z.domain+"/eapi/user/login", requestBody)
 	if err != nil {
 		return nil, err
 	}
