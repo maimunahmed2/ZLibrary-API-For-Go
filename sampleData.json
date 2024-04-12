@@ -1,0 +1,48 @@
+{
+  "books": [
+    {
+      "_isUserSavedBook": false,
+      "active": "1",
+      "author": "Talia Hibbert",
+      "cover": "https://s3proxy.cdn-zlib.se/covers299/collections/userbooks/eb22274c653f7403f7650fcf38217f9cf97c8cbe3601ac229a978f9d8e7cc789.jpg",
+      "deleted": 0,
+      "description": "\u003cspan\u003eChloe Brown is a chronically ill computer geek with a goal, a plan, and a list. After almost—but not quite—dying, she’s come up with six directives to help her “Get a Life”, and she’s already completed the first: finally moving out of her glamourous family’s mansion. The next items?\u003c/span\u003e\u003cbr\u003e\u003cspan\u003e• Enjoy a drunken night out.\u003c/span\u003e\u003cbr\u003e\u003cspan\u003e• Ride a motorcycle.\u003c/span\u003e\u003cbr\u003e\u003cspan\u003e• Go camping.\u003c/span\u003e\u003cbr\u003e\u003cspan\u003e• Have meaningless but thoroughly enjoyable sex.\u003c/span\u003e\u003cbr\u003e\u003cspan\u003e• Travel the world with nothing but hand luggage.\u003c/span\u003e\u003cbr\u003e\u003cspan\u003e• And... do something bad.\u003c/span\u003e\u003cbr\u003e\u003cspan\u003eBut it’s not easy being bad, even when you’ve written step-by-step guidelines on how to do it correctly. What Chloe needs is a teacher, and she knows just the man for the job.\u003c/span\u003e\u003cbr\u003e\u003cspan\u003eRedford ‘Red’ Morgan is a handyman with tattoos, a motorcycle, and more sex appeal than ten-thousand Hollywood heartthrobs. He’s also an artist who paints at night and hides his work in the light of day, which Chloe knows because she spies on him occasionally. Just the teeniest, tiniest bit.\u003c/span\u003e\u003cbr\u003e\u003cspan\u003eBut when she enlists Red in her mission to rebel, she learns things about him that no spy session could teach her. Like why he clearly resents Chloe’s wealthy background. And why he never shows his art to anyone. And what really lies beneath his rough exterior…\u003c/span\u003e",
+      "dl": "/dl/11382739/347c5d",
+      "edition": null,
+      "extension": "pdf",
+      "filesize": "1576140",
+      "filesizeString": "1.50 MB",
+      "hash": "5fefc0",
+      "href": "/book/11382739/5fefc0/get-a-life-chloe-brown.html",
+      "id": "11382739",
+      "identifier": "9780349425207,0349425205,B07VPDZ4NW",
+      "interestScore": "3.0",
+      "kindleAvailable": false,
+      "language": "English",
+      "md5": "f78ef0fc83f65d2b190c985607363e67",
+      "pages": "0",
+      "preview": "ireader/11382739",
+      "publisher": "Little, Brown Book Group",
+      "qualityScore": "0",
+      "readOnlineAvailable": true,
+      "readOnlineUrl": "https://reader-service.z-library.se/reader-pdf/6275d8a4c8e2db4db59ea0e6585da43ba38600d85fcece9e4e0285607632d364?download_location=https://singlelogin.se/dl/11382739/347c5d",
+      "sendToEmailAvailable": false,
+      "series": "",
+      "sha256": "6275d8a4c8e2db4db59ea0e6585da43ba38600d85fcece9e4e0285607632d364",
+      "terms_hash": "239971813856d281b6a7f793a5232252",
+      "title": "Get A Life, Chloe Brown",
+      "volume": "",
+      "year": "2019"
+    }
+  ],
+  "exactBooksCount": 346,
+  "pagination": {
+    "before": false,
+    "current": 1,
+    "limit": 1,
+    "next": 2,
+    "total_items": 346,
+    "total_pages": 346
+  },
+  "success": 1
+}
