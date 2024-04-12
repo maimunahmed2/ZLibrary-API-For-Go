@@ -2,8 +2,8 @@ package zlibrary
 
 import (
 	"errors"
-	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/maimunahmed2/ZLibrary-API-For-Go/utils"
@@ -18,9 +18,7 @@ type ZLibrary struct {
 	cookies      map[string]string
 }
 
-func (z *ZLibrary) Init(email string, password string)(map[string]interface{}, error) {
-	z.email = email
-	z.password = password
+func (z *ZLibrary) Init()(map[string]interface{}, error) {
 	z.domain = "https://singlelogin.se"
 	z.isLoggedIn = false
 	z.headers = map[string]string{
@@ -32,18 +30,13 @@ func (z *ZLibrary) Init(email string, password string)(map[string]interface{}, e
 	z.cookies = map[string]string{
 		"siteLanguageV2": "en",
 	}
-
-	if email == "" && password == "" {
-		return nil, errors.New("email and password cannot be empty")
-	}
 	
-	return z.Login(email, password)
-
+	return map[string]interface{}{"success": 1}, nil
+	// return z.Login(email, password)
 }
 
 func (z ZLibrary) Login(email string, password string)(map[string]interface{}, error) {
 	formData := url.Values{"email": {email}, "password": {password}}
-	requestBody := strings.NewReader(formData.Encode())
 	// Alternatively
 	// formData := url.Values{}
     // formData.Set("key", "value")
@@ -54,7 +47,7 @@ func (z ZLibrary) Login(email string, password string)(map[string]interface{}, e
     // formData["email"] = email
     // formData["password"] = password
 
-	res, err := utils.MakePostRequest(z.domain+"/eapi/user/login", requestBody)
+	res, err := utils.MakePostRequest(z.domain+"/eapi/user/login", formData, z.cookies)
 	if err != nil {
 		return nil, err
 	}
@@ -63,13 +56,17 @@ func (z ZLibrary) Login(email string, password string)(map[string]interface{}, e
 		errMsg := strings.ToLower(errVal.(string))
 		return nil, errors.New(errMsg)
 	}
+
+	z.cookies["remix_userid"] = strconv.FormatFloat(res["user"].(map[string]interface{})["id"].(float64), 'f', -1, 64)
+	z.cookies["remix_userkey"] = res["user"].(map[string]interface{})["remix_userkey"].(string)
+
 	return res, nil
 }
 
-func (z ZLibrary) GetProfile()(*http.Response, error) {
-	return utils.MakeGetRequest(z.domain+"/eapi/user/profile")
+func (z ZLibrary) GetProfile()(map[string]interface{}, error) {
+	return utils.MakeGetRequest(z.domain+"/eapi/user/profile", z.cookies)
 }
 
-func (z ZLibrary) GetSimilar(id string, hash string)(*http.Response, error) {
-	return utils.MakeGetRequest(z.domain+"/eapi/book/"+id+"/"+hash+"/similar")
+func (z ZLibrary) GetSimilar(id string, hash string)(map[string]interface{}, error) {
+	return utils.MakeGetRequest(z.domain+"/eapi/book/"+id+"/"+hash+"/similar", z.cookies)
 }
