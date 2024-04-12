@@ -37,31 +37,47 @@ func (z *ZLibrary) Init()(map[string] interface{}, error) {
 	// return z.Login(email, password)
 }
 
-func (z ZLibrary) LoginWithCredentials(email string, password string)(map[string]interface{}, error) {
-	formData := url.Values{"email": {email}, "password": {password}}
-	// Alternatively
-	// formData := url.Values{}
-    // formData.Set("key", "value")
-	// OR
-	// formData := map[string]string{"email": email, "password": password}
-	// OR
-	// formData := make(map[string]string)
-    // formData["email"] = email
-    // formData["password"] = password
+//Tries to find the account having the threshold download limit. If
+// unavailable, returns the last account.
+func (z ZLibrary) LoginWithCredentials(credentials map[string]string, availableDownloadsThreshold *int16)(map[string]interface{}, error) {
+	var res map[string] interface{}
+	var err error
+	for email, password := range credentials {
+		formData := url.Values{"email": {email}, "password": {password}}
+		// Alternatively
+		// formData := url.Values{}
+		// formData.Set("key", "value")
+		// OR
+		// formData := map[string]string{"email": email, "password": password}
+		// OR
+		// formData := make(map[string]string)
+		// formData["email"] = email
+		// formData["password"] = password
 
-	res, err := utils.MakePostRequest(z.domain+"/eapi/user/login", formData, z.headers, z.cookies)
-	if err != nil {
-		return nil, err
+		res, err = utils.MakePostRequest(z.domain+"/eapi/user/login", formData, z.headers, z.cookies)
+		if err != nil {
+			return nil, err
+		}
+	
+		//TODO: Check if this code is valid or should be updated or removed.
+		if errVal, ok := res["error"]; ok {
+			errMsg := strings.ToLower(errVal.(string))
+			return nil, errors.New(errMsg)
+		}
+
+		z.cookies["remix_userid"] = strconv.FormatFloat(res["user"].(map[string]interface{})["id"].(float64), 'f', -1, 64)
+		z.cookies["remix_userkey"] = res["user"].(map[string] interface{})["remix_userkey"].(string)
+	
+		availableDownloads, err := z.GetDownloadsAvailable()
+		if err != nil {
+			return nil, err
+		}
+		fmt.Println("Trying: " + email)
+		fmt.Println(*availableDownloads)
+		if availableDownloadsThreshold != nil && *availableDownloads >= *availableDownloadsThreshold {
+			break
+		}
 	}
-
-	if errVal, ok := res["error"]; ok {
-		errMsg := strings.ToLower(errVal.(string))
-		return nil, errors.New(errMsg)
-	}
-
-	z.cookies["remix_userid"] = strconv.FormatFloat(res["user"].(map[string]interface{})["id"].(float64), 'f', -1, 64)
-	z.cookies["remix_userkey"] = res["user"].(map[string] interface{})["remix_userkey"].(string)
-
 	return res, nil
 }
 
@@ -162,4 +178,13 @@ func (z ZLibrary) GetExpirableDownloadLink(bookId string, bookHash string, filen
 
 func (z ZLibrary) GetBookData(bookId string, bookHash string)(map[string]interface{}, error) {
 	return utils.MakeGetRequest(z.domain+"/eapi/book/"+bookId+"/"+bookHash, z.headers, z.cookies)
+}
+
+func (z ZLibrary) GetDownloadsAvailable()(*int16, error) {
+	profileData, err := z.GetProfile()
+	if err != nil {
+		return nil, err
+	}
+	available := int16(profileData["user"].(map[string]interface{})["downloads_limit"].(float64) - profileData["user"].(map[string]interface{})["downloads_today"].(float64))
+	return &available, nil
 }
